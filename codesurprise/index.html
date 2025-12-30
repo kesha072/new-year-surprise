@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>New Year Surprise</title>
+    <style>
+        /* CSS STYLES */
+        :root {
+            --bg-color: #0b0111;
+            --card-bg: rgba(255, 255, 255, 0.08);
+            --pink: #ff69b4;
+            --gold: #ffd700;
+        }
+
+        * { 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            background-color: var(--bg-color);
+            color: white; font-family: 'Segoe UI', Tahoma, sans-serif;
+            overflow: hidden;
+        }
+
+        .screen {
+            display: none; flex-direction: column;
+            align-items: center; justify-content: center;
+            width: 100%; height: 100vh;
+            padding: 20px; text-align: center;
+            position: absolute; top: 0; left: 0;
+        }
+
+        .active { display: flex; animation: fadeIn 0.4s ease-in; }
+
+        /* Intro Glass Card */
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 30px 20px; border-radius: 20px;
+            width: 100%; max-width: 320px;
+        }
+        .heart-icon { font-size: 60px; color: var(--pink); filter: drop-shadow(0 0 15px var(--pink)); }
+
+        /* Photo Stack */
+        .card-stack { position: relative; width: 260px; height: 340px; margin: 20px 0; }
+        .card {
+            position: absolute; width: 100%; height: 100%;
+            background: white; border-radius: 15px; padding: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.5s;
+            cursor: pointer;
+        }
+        .card img { width: 100%; height: 80%; object-fit: cover; border-radius: 10px; }
+        .card-label { color: #333; font-weight: bold; margin-top: 10px; font-size: 14px; }
+
+        /* Secret Reveal Rows */
+        .reveal-container { width: 100%; max-width: 320px; display: flex; flex-direction: column; gap: 12px; }
+        .reveal-row {
+            background: var(--card-bg); border: 1px solid rgba(255,255,255,0.1);
+            padding: 18px; border-radius: 50px; cursor: pointer;
+            position: relative; overflow: hidden; transition: 0.3s;
+        }
+        .revealed { background: rgba(255, 255, 255, 0.15); border-color: var(--pink); color: var(--pink); font-weight: bold; }
+
+        /* Pop Particles */
+        .particle {
+            position: absolute; width: 6px; height: 6px; background: var(--pink);
+            border-radius: 50%; pointer-events: none;
+            animation: popOut 0.5s ease-out forwards;
+        }
+
+        /* Golden Ticket */
+        .ticket { border: 2px dashed var(--gold); padding: 30px; border-radius: 20px; background: #111; }
+        .gold-text { color: var(--gold); letter-spacing: 2px; }
+
+        /* FINAL ATTRACTIVE CARD */
+        .final-card {
+            background: white; color: #333; padding: 25px; border-radius: 20px; 
+            width: 100%; max-width: 320px; position: relative;
+            box-shadow: 0 0 30px rgba(255, 105, 180, 0.4);
+        }
+        .glow-border {
+            position: absolute; top: -4px; left: -4px; right: -4px; bottom: -4px;
+            background: linear-gradient(45deg, #ff69b4, #ffd700, #00dbde, #ff69b4);
+            background-size: 400%; z-index: -1; border-radius: 24px;
+            animation: glowMove 8s linear infinite; filter: blur(8px);
+        }
+        .new-year-glow { color: #d35400; font-size: 2.2rem; margin: 10px 0; }
+        .year-badge { background: #d35400; color: white; padding: 5px 15px; border-radius: 20px; font-weight: bold; display: inline-block; }
+
+        /* Buttons */
+        .hidden-btn { 
+            display: none; margin-top: 20px; padding: 12px 24px; 
+            border-radius: 25px; border: none; background: var(--pink); 
+            color: white; font-weight: bold; 
+        }
+        .restart-btn { margin-top: 20px; background: none; border: 1px solid white; color: white; padding: 10px 20px; border-radius: 20px; }
+
+        /* Animations */
+        @keyframes glowMove { 0% {background-position: 0 0;} 50% {background-position: 400% 0;} 100% {background-position: 0 0;} }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes popOut {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) scale(0); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="page1" class="screen active" onclick="nextPage('page2')">
+        <div class="glass-card">
+            <h2>A little surprise for you</h2>
+            <div class="heart-icon">❤</div>
+            <p>Tap to start</p>
+        </div>
+    </div>
+
+    <div id="page2" class="screen">
+        <h2 id="instruction-text">Tap the photos away...</h2>
+        <div id="message-display" style="margin-bottom: 10px; color: var(--pink);">Reveal the memories</div>
+        <div class="card-stack">
+            <div class="card" onclick="swipeCard(this)" data-msg="You're my favorite person.">
+                <img src="photo1.jpg" alt="Photo 1">
+                <div class="card-label">My Favorite 💖</div>
+            </div>
+            <div class="card" onclick="swipeCard(this)" data-msg="Thank you for being you.">
+                <img src="photo2.jpg" alt="Photo 2">
+                <div class="card-label">The best times ✨</div>
+            </div>
+            <div class="card" onclick="swipeCard(this)" data-msg="I'm so proud of you.">
+                <img src="photo3.jpg" alt="Photo 3">
+                <div class="card-label">Proud of you 🌟</div>
+            </div>
+            <div class="card" onclick="swipeCard(this)" data-msg="I'm so proud of you.">
+                <img src="photo4.jpg" alt="Photo 3">
+                <div class="card-label">Proud of you 🌟</div>
+            </div>
+            <div class="card" onclick="swipeCard(this)" data-msg="I'm so proud of you.">
+                <img src="photo5.jpg" alt="Photo 3">
+                <div class="card-label">Proud of you 🌟</div>
+            </div>
+            <div class="card" onclick="swipeCard(this)" data-msg="I'm so proud of you.">
+                <img src="photo6.jpg" alt="Photo 3">
+                <div class="card-label">Proud of you 🌟</div>
+            </div>
+            <div class="card" onclick="swipeCard(this)" data-msg="I'm so proud of you.">
+                <img src="photo7.jpg" alt="Photo 3">
+                <div class="card-label">Proud of you 🌟</div>
+            </div>
+        </div>
+        <button id="btn-next" class="hidden-btn" onclick="nextPage('page3')">Next Page →</button>
+    </div>
+
+    <div id="page3" class="screen">
+        <h2 style="font-family: cursive; font-size: 2.5rem; color: var(--pink);">Just for you</h2>
+        <p style="margin-bottom: 20px; opacity: 0.8;">Tap each heart to reveal</p>
+        <div class="reveal-container">
+            <div class="reveal-row" onclick="revealSecret(this, 'You look adorable')">♡</div>
+            <div class="reveal-row" onclick="revealSecret(this, 'You have the best vibe')">♡</div>
+            <div class="reveal-row" onclick="revealSecret(this, 'You make things feel lighter')">♡</div>
+            <div class="reveal-row" onclick="revealSecret(this, 'Your smile is my favorite')">♡</div>
+            <div class="reveal-row" onclick="revealSecret(this, 'You are truly special')">♡</div>
+        </div>
+        <button id="btn-after-reveal" class="hidden-btn" onclick="nextPage('page4')">Continue →</button>
+    </div>
+
+    <div id="page4" class="screen" onclick="nextPage('page5')">
+        <div class="ticket">
+            <h1 class="gold-text">GOLDEN TICKET</h1>
+            <p>"Unlimited Love & Smiles"</p>
+            <div style="margin-top:20px; font-size: 0.8rem; color: var(--gold);">TAP TO CLAIM ></div>
+        </div>
+    </div>
+
+    <div id="page5" class="screen">
+        <div class="final-card">
+            <div class="glow-border"></div>
+            <div class="card-content">
+                <p style="color: #666; font-size: 0.8rem;">✨ 2026 IS HERE ✨</p>
+                <h1 class="new-year-glow">HAPPY<br>NEW YEAR</h1>
+                <div class="year-badge">2026</div>
+                <div style="font-size: 45px; margin: 15px 0;">☃️ 🧸 🥂</div>
+                <p>Wishing you a year full of infinite joy and love!</p>
+            </div>
+        </div>
+        <button class="restart-btn" onclick="location.reload()">↺ Start Over</button>
+    </div>
+
+    <script>
+        let revealsDone = 0;
+        let cardsSwiped = 0;
+
+        function nextPage(pageId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        function swipeCard(el) {
+            el.style.transform = 'translateX(200%) rotate(45deg)';
+            el.style.opacity = '0';
+            document.getElementById('message-display').innerText = el.getAttribute('data-msg');
+            cardsSwiped++;
+            if(cardsSwiped >= 3) {
+                document.getElementById('btn-next').style.display = 'block';
+            }
+        }
+
+        function revealSecret(element, message) {
+            if (element.classList.contains('revealed')) return;
+            
+            // Pop Crack Effect
+            for (let i = 0; i < 15; i++) {
+                const p = document.createElement('div');
+                p.classList.add('particle');
+                p.style.setProperty('--x', (Math.random() - 0.5) * 200 + 'px');
+                p.style.setProperty('--y', (Math.random() - 0.5) * 200 + 'px');
+                p.style.left = '50%'; p.style.top = '50%';
+                element.appendChild(p);
+                setTimeout(() => p.remove(), 500);
+            }
+
+            element.innerText = message;
+            element.classList.add('revealed');
+            revealsDone++;
+            if (revealsDone >= 5) {
+                document.getElementById('btn-after-reveal').style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>
